@@ -58,7 +58,9 @@ public class ArrayList<T> implements List<T> {
 	
 	@Override
 	public boolean add(int index, T obj) {
-		checkIndexInBounds(index);
+		if(checkIndexOutOfBounds(index)) {
+			return false;
+		}
 		ensureCapacity();
 		System.arraycopy(array, index, array, index + 1, (size++) - index);
 		array[index] = obj;
@@ -67,7 +69,9 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public T remove(int index) {
-		checkIndexInBounds(index);
+		if(checkIndexOutOfBounds(index)) {
+			return null;
+		}
 		T res = array[index];
 		removeOneElement(index);
 		return res;
@@ -94,9 +98,8 @@ public class ArrayList<T> implements List<T> {
 	}
 	
 	@Override
-	public T get(int index) {
-		checkIndexInBounds(index);
-		return array[index];
+	public T get(int index) {		
+		return checkIndexOutOfBounds(index) ? null : array[index];
 	}
 
 	@Override
@@ -133,10 +136,8 @@ public class ArrayList<T> implements List<T> {
 		}
 	}
 
-	private void checkIndexInBounds(int index) {
-		if(index < 0 || index >= size) {
-			throw new IndexOutOfBoundsException(index);
-		}
+	private boolean checkIndexOutOfBounds(int index) {
+		return index < 0 || index > size;
 	}
 
 }

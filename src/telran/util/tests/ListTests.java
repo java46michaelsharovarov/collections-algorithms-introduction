@@ -29,10 +29,7 @@ abstract class ListTests extends CollectionTests {
 		assertTrue(list.add(list.size() - 1, 777));
 		assertEquals(777, list.get(list.size() - 2));
 		expectedSize = list.size();
-		try {
-			assertFalse(list.add(-1, 888));
-			fail();
-		} catch (IndexOutOfBoundsException e) {}
+		assertFalse(list.add(-1, 888));
 		assertEquals(expectedSize, list.size());		
 	}
 	
@@ -52,11 +49,8 @@ abstract class ListTests extends CollectionTests {
 		int expectedSize = list.size() - 1;
 		assertEquals(expected1, list.remove(list.size() - 1));
 		assertEquals(expectedSize, list.size());
-		assertEquals(expected2, list.get(list.size() - 1));		
-		try {
-			assertNull(list.remove(-1));
-			fail();
-		} catch (IndexOutOfBoundsException e) {}
+		assertEquals(expected2, list.get(list.size() - 1));	
+		assertNull(list.remove(-1));
 	}	
 	
 	@Test
@@ -69,14 +63,12 @@ abstract class ListTests extends CollectionTests {
 	void lastIndexOfTest() {
 		list.add(9);
 		assertEquals(list.size() - 1, list.lastIndexOf(9));
+		assertEquals(-1, list.lastIndexOf(999));
 	}
 	
 	@Test
 	void getTest() {
 		assertEquals(0, list.get(0));
-		try {
-			assertNull(list.get(-1));
-			fail();
-		} catch (IndexOutOfBoundsException e) {}
+		assertNull(list.get(-1));
 	}
 }
