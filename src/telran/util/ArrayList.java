@@ -47,11 +47,6 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	@Override
-	public boolean contains(Object pattern) {		
-		return indexOf(pattern) >= 0;
-	}
-
-	@Override
 	public int size() {		
 		return size;
 	}

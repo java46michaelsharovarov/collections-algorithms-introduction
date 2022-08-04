@@ -16,7 +16,7 @@ abstract class ListTests extends CollectionTests {
 		list = (List<Integer>) collection;
 	}
 	@Test
-	void addIndexTest() {		
+	void addByIndexTest() {		
 		assertTrue(list.add(0, 555));
 		assertEquals(555, list.get(0));
 		int expectedSize = list.size() + NUMBER_OF_ADD_ELEM;
@@ -34,7 +34,7 @@ abstract class ListTests extends CollectionTests {
 	}
 	
 	@Test
-	void removeIndexTest() {
+	void removeByIndexTest() {
 		int[] arOfIndexes = {0, 2};
 		for(int i = 0; i < arOfIndexes.length; i++) {
 			int expected1 = list.get(arOfIndexes[i]);
