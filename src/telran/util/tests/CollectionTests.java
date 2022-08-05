@@ -3,6 +3,7 @@ package telran.util.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -54,6 +55,9 @@ abstract class  CollectionTests {
 	
 	@Test
 	void removeIfTest() {
+		
+		assertTrue(collection.removeIf(new EvenPredicate()));
+		
 		int expectedSize = collection.size();
 		Predicate<Integer> AllFalsePredicate = new AllFalsePredicate();
 		assertFalse(collection.removeIf(AllFalsePredicate));
@@ -80,5 +84,25 @@ abstract class  CollectionTests {
 		assertTrue(expected1 == collection.toArray(expected1));
 		assertTrue(expected2 == collection.toArray(expected2));
 		assertArrayEquals(expected1, Arrays.copyOf(expected2, collection.size()));
+	}
+	
+	@Test
+	void wrongRemoveIteratorTest() {
+		Iterator<Integer> it = collection.iterator();
+		wrongRemove(it);
+		it.next();
+		it.next();
+		it.remove();
+		wrongRemove(it);
+	}
+
+	private void wrongRemove(Iterator<Integer> it) {
+		boolean wasExeption = false;
+		try {
+			it.remove();
+		} catch (IllegalStateException e) {
+			wasExeption = true;
+		}
+		assertTrue(wasExeption);
 	}
 }

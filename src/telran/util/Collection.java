@@ -27,7 +27,17 @@ public interface Collection<T> extends Iterable<T> {
 	 * @param predicate
 	 * @return true if a collection has been updated
 	 */
-	boolean removeIf(Predicate<T> predicate);
+	default boolean removeIf(Predicate<T> predicate) {
+		int sizeOld = size();
+		Iterator<T> it = iterator();
+		while(it.hasNext()) {
+			T obj = it.next();
+			if(predicate.test(obj)) {
+				it.remove();
+			}
+		}
+		return sizeOld > size();		
+	}
 	
 	/*************************************************/
 	/**
@@ -60,10 +70,5 @@ public interface Collection<T> extends Iterable<T> {
 			ar[i++] = it.next();
 		}
 		return ar;
-		//TODO fill array by iterating 
-		//if ar.length < size then you should create new array of type T with proper length(consider method Arrays.copyOf)
-		//if ar.length == size then you just fill the given array and reference to the same array will be returned
-		//if ar'length > size then you fill the given array and rest part should be filled by null's and 
-		// reference to the same array will be returned		
 	}
 }

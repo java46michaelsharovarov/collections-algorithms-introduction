@@ -36,17 +36,6 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	@Override
-	public boolean removeIf(Predicate<T> predicate) {
-		int prevSize = size;
-		for(int i = size - 1 ; i >= 0; i--) {
-			if(predicate.test(array[i])) {
-				removeOneElement(i);
-			}
-		}
-		return prevSize != size;
-	}
-
-	@Override
 	public int size() {		
 		return size;
 	}
@@ -96,6 +85,21 @@ public class ArrayList<T> implements List<T> {
 	public T get(int index) {		
 		return checkIndexOutOfBounds(index) ? null : array[index];
 	}
+	
+	@Override
+	public boolean removeIf(Predicate<T> predicate) {
+		int prevSize = size();
+		T[] res = Arrays.copyOf(array, size);
+		int j = 0;
+		for(int i = 0; i < size; i++) {
+			if(!predicate.test(array[i])) {
+				res[j++] = array[i];
+			}
+		}	
+		array = Arrays.copyOf(res, j);
+		size = j;
+		return size < prevSize;
+	}
 
 	@Override
 	public Iterator<T> iterator() {		
@@ -104,6 +108,7 @@ public class ArrayList<T> implements List<T> {
 
 	private class ArrayListIterator implements Iterator<T> {
 		int next = 0;
+		boolean wasNext = false;
 		
 		@Override
 		public boolean hasNext() {
@@ -115,9 +120,18 @@ public class ArrayList<T> implements List<T> {
 			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
+			wasNext = true;
 			return array[next++];
 		}
 		
+		@Override
+		public void remove() {
+			if(!wasNext) {
+				throw new IllegalStateException();
+			}
+			ArrayList.this.remove(--next);
+			wasNext = false;
+		}		
 	}
 
 	private void removeOneElement(int i) {

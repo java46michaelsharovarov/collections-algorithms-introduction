@@ -2,7 +2,6 @@ package telran.util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.function.Predicate;
 
 public class LinkedList<T> implements List<T> {
 	
@@ -42,21 +41,7 @@ public class LinkedList<T> implements List<T> {
 		removeNode(getNodeByIndex(index));
 		return true;
 	}
-
-	@Override
-	public boolean removeIf(Predicate<T> predicate) {
-		Node<T> current = head;
-		int prevSize = size;
-		while(current != null) {
-			if(predicate.test(current.obj)) {
-				removeNode(current);
-			} 
-			current = current.next;			
-		}
-		return prevSize != size;
-		
-	}
-
+	
 	@Override
 	public int size() {		
 		return size;
@@ -121,8 +106,29 @@ public class LinkedList<T> implements List<T> {
 		return new LinkedListIterator();
 	}
 	
+	public void reverse() {
+		Node<T> current = head;
+		Node<T> tmp = null;
+		for(int i = 0; i < size - 1; i++) {
+			if(current == head) {
+				head.prev = head.next;
+				tail.next = tail.prev;
+				head.next = tail.prev = null;
+				tmp = head;
+				head = tail;
+				tail = tmp;
+			} else {
+				tmp = current.next;
+				current.next = current.prev;
+				current.prev = tmp;
+			}
+			current = current.prev;
+		}
+	}	
+	
 	private class LinkedListIterator implements Iterator<T> {
 		Node<T> current = head;
+		boolean wasNext = false;
 		
 		@Override
 		public boolean hasNext() {
@@ -134,10 +140,24 @@ public class LinkedList<T> implements List<T> {
 			if(!hasNext()) {
 				throw new NoSuchElementException();
 			}
+			wasNext = true;
 			T currentObj = current.obj;
 			current = current.next;
 			return currentObj;
-		}		
+		}	
+		
+		@Override
+		public void remove() {
+			if(!wasNext) {
+				throw new IllegalStateException();
+			}
+			if(current == null) {
+				removeNode(tail);
+			} else {
+				removeNode(current.prev);
+			}
+			wasNext = false;
+		}
 	}
 
 	private void addByIndex(int index, T obj) {

@@ -46,7 +46,6 @@ public interface List<T> extends Collection<T> {
 	@Override
 	default boolean contains(Object pattern) {
 		return indexOf(pattern) > 0;
-	}
-	
+	}	
 
 }
