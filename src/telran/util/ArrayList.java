@@ -89,15 +89,17 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
 		int prevSize = size();
-		T[] res = Arrays.copyOf(array, size);
-		int j = 0;
+		int  index = 0;
 		for(int i = 0; i < size; i++) {
-			if(!predicate.test(array[i])) {
-				res[j++] = array[i];
+			if(predicate.test(array[i])) {
+				array[i] = null;
+			} else {
+				T tmp = array[i];
+				array[i] = null;
+				array[index++] = tmp;
 			}
-		}	
-		array = Arrays.copyOf(res, j);
-		size = j;
+		}
+		size = index;
 		return size < prevSize;
 	}
 

@@ -54,16 +54,33 @@ abstract class  CollectionTests {
 	}
 	
 	@Test
-	void removeIfTest() {
-		
-		assertTrue(collection.removeIf(new EvenPredicate()));
-		
+	void removeIfAllTrueAndAllFalseTest() {		
 		int expectedSize = collection.size();
 		Predicate<Integer> AllFalsePredicate = new AllFalsePredicate();
 		assertFalse(collection.removeIf(AllFalsePredicate));
 		assertEquals(expectedSize, collection.size());
 		assertTrue(collection.removeIf(AllFalsePredicate.negate()));
 		assertEquals(0, collection.size());
+	}
+	@Test
+	void removeIfEvenTest() {
+		Integer[] expected1 = {1, 3, 5, 7, 9, 11, 13, 15};
+		assertTrue(collection.removeIf(new EvenPredicate()));
+		assertArrayEquals(expected1, collection.toArray(new Integer[0]));
+	}
+	
+	@Test
+	void removeIfOddTest() {
+		Integer[] expected1 = {0, 2, 4, 6, 8, 10, 12, 14};
+		assertTrue(collection.removeIf(new OddPredicate()));
+		assertArrayEquals(expected1, collection.toArray(new Integer[0]));
+	}
+	
+	@Test
+	void removeIfMultiplicityTest() {
+		Integer[] expected1 = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14};
+		assertTrue(collection.removeIf(new MultiplicityOfThreePredicate()));
+		assertArrayEquals(expected1, collection.toArray(new Integer[0]));
 	}
 	
 	@Test
