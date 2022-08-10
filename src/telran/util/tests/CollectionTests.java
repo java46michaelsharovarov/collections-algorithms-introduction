@@ -14,6 +14,8 @@ import telran.util.Collection;
 
 abstract class  CollectionTests {
 	protected final static int NUMBER_OF_ADD_ELEM = 100;
+	private static final int N_RUNS = 10000;
+	private static final int N_NUMBERS = 10000;
 	protected Collection<Integer> collection;
 	protected abstract Collection<Integer> createCollection();
 	Integer[] array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
@@ -122,4 +124,20 @@ abstract class  CollectionTests {
 		}
 		assertTrue(wasExeption);
 	}
+	
+	@Test
+	void removeIfPerformanceTest() {
+		Predicate<Integer> predicate = new AllFalsePredicate().negate();
+		for (int i = 0; i < N_RUNS; i++) {
+			fillLargeCollection();
+			collection.removeIf(predicate);
+		}
+	}
+	private void fillLargeCollection() {
+		for(int i = 0; i < N_NUMBERS; i++) {
+			collection.add(i);
+		}
+		
+	}
+
 }

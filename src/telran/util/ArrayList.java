@@ -94,9 +94,12 @@ public class ArrayList<T> implements List<T> {
 			if(predicate.test(array[i])) {
 				array[i] = null;
 			} else {
-				T tmp = array[i];
-				array[i] = null;
-				array[index++] = tmp;
+				if(i != index) {
+					T tmp = array[i];
+					array[i] = null;
+					array[index] = tmp;
+				}
+				index++;
 			}
 		}
 		size = index;
