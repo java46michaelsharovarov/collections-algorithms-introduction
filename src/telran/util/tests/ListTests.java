@@ -68,7 +68,7 @@ abstract class ListTests extends CollectionTests {
 	
 	@Test
 	void getTest() {
-		assertEquals(0, list.get(0));
+		assertEquals(10, list.get(0));
 		assertNull(list.get(-1));
 	}
 }

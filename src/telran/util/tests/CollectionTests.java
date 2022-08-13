@@ -16,9 +16,11 @@ abstract class  CollectionTests {
 	protected final static int NUMBER_OF_ADD_ELEM = 100;
 	private static final int N_RUNS = 10000;
 	private static final int N_NUMBERS = 10000;
+	private static final int N_RANDOM_RUNS = 10;
+	private static final int N_RANDOM_NUMBERS = 10;
 	protected Collection<Integer> collection;
 	protected abstract Collection<Integer> createCollection();
-	Integer[] array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+	Integer[] expected = {10, -5, 13, 20, 40, 15};
 	Random rand = new Random();
 	int initialSize = 0;
 	@BeforeEach
@@ -28,7 +30,7 @@ abstract class  CollectionTests {
 	}
 
 	private void fillCollection() {
-		for(int elt: array) {
+		for(int elt: expected) {
 			collection.add(elt++);
 			initialSize++;
 		}
@@ -36,8 +38,8 @@ abstract class  CollectionTests {
 
 	@Test
 	void addTest() {
-		assertTrue(collection.add(16));
-		assertTrue(collection.add(1));
+		assertTrue(collection.add(100));
+		assertTrue(collection.add(10));
 		int expectedSize = collection.size() + NUMBER_OF_ADD_ELEM;
 		int count = NUMBER_OF_ADD_ELEM;
 		while(count-- > 0) {
@@ -49,9 +51,9 @@ abstract class  CollectionTests {
 	@Test
 	void removeTest() {
 		int expectedSize = collection.size() - 1;
-		assertTrue(collection.remove(15));
+		assertTrue(collection.remove(expected[0]));
 		assertEquals(expectedSize, collection.size());
-		assertFalse(collection.remove(333));
+		assertFalse(collection.remove(expected[0]));
 		assertEquals(expectedSize, collection.size());
 	}
 	
@@ -66,29 +68,47 @@ abstract class  CollectionTests {
 	}
 	@Test
 	void removeIfEvenTest() {
-		Integer[] expected1 = {1, 3, 5, 7, 9, 11, 13, 15};
+		Integer[] expected1 = {-5, 13, 15};
 		assertTrue(collection.removeIf(new EvenPredicate()));
 		assertArrayEquals(expected1, collection.toArray(new Integer[0]));
+		for (int i = 0; i < N_RANDOM_RUNS; i++) {
+			fillRandomCollection();
+			collection.removeIf(new EvenPredicate());
+			for (int num : collection) {
+				assertTrue(num % 2 == 1);
+			}
+		}
+	}
+	
+	private void fillRandomCollection() {
+		collection = createCollection();
+		for (int i = 0; i < N_RANDOM_NUMBERS; i++) {
+			collection.add((int) (Math.random() * Integer.MAX_VALUE));
+		}
 	}
 	
 	@Test
 	void removeIfOddTest() {
-		Integer[] expected1 = {0, 2, 4, 6, 8, 10, 12, 14};
+		Integer[] expected1 = {10, 20, 40};
 		assertTrue(collection.removeIf(new OddPredicate()));
-		assertArrayEquals(expected1, collection.toArray(new Integer[0]));
+		Integer[] res = collection.toArray(new Integer[0]);
+		Arrays.sort(res);
+		assertArrayEquals(expected1, res);
 	}
 	
 	@Test
 	void removeIfMultiplicityTest() {
-		Integer[] expected1 = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14};
+		Integer[] expected1 = {-5, 10, 13, 20, 40};
 		assertTrue(collection.removeIf(new MultiplicityOfThreePredicate()));
-		assertArrayEquals(expected1, collection.toArray(new Integer[0]));
+		Integer[] res = collection.toArray(new Integer[0]);
+		Arrays.sort(res);
+		assertArrayEquals(expected1, res);
 	}
 	
 	@Test
 	void containTest() {
-		assertTrue(collection.contains(15));
-		assertFalse(collection.contains(333));
+		assertTrue(collection.contains(10));
+		assertFalse(collection.contains(1000));
 	}
 
 	@Test
@@ -97,12 +117,14 @@ abstract class  CollectionTests {
 	}
 	@Test
 	void toArrayTest() {
-		Integer[] expected1 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 		Integer [] expected2 = new Integer[100];
-		assertArrayEquals(expected1, collection.toArray(new Integer[0]));
-		assertTrue(expected1 == collection.toArray(expected1));
+		assertArrayEquals(expected, collection.toArray(new Integer[0]));
+		assertTrue(expected == collection.toArray(expected));
 		assertTrue(expected2 == collection.toArray(expected2));
-		assertArrayEquals(expected1, Arrays.copyOf(expected2, collection.size()));
+		assertArrayEquals(expected, Arrays.copyOf(expected2, collection.size()));
+		for (int i = collection.size(); i < expected2.length; i++) {
+			assertNull(expected2[i]);
+		}
 	}
 	
 	@Test

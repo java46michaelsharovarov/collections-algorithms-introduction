@@ -17,9 +17,13 @@ public class LinkedListTests extends ListTests {
 	@Test
 	void reverseTest() {
 		LinkedList<Integer> linkedList = (LinkedList<Integer>) list;
-		Integer [] expected = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+		Integer [] expected1 = {15, 40, 20, 13, -5, 10};
 		linkedList.reverse();
-		assertArrayEquals(expected, linkedList.toArray(new Integer[0]));
+		assertArrayEquals(expected1, linkedList.toArray(new Integer[0]));
+		Integer expected2[] = {100, 10, -5, 13, 20, 40, 15};
+		linkedList.add(100);
+		linkedList.reverse();
+		assertArrayEquals(expected2, linkedList.toArray(new Integer[0]));
 	}
 
 }
