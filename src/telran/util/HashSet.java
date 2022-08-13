@@ -1,6 +1,7 @@
 package telran.util;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class HashSet<T> implements Set<T> {
 	
@@ -39,7 +40,7 @@ public class HashSet<T> implements Set<T> {
 		@Override
 		public T next() {
 			if(!hasNext()) {
-				throw new IllegalStateException();
+				throw new NoSuchElementException();
 			}
 			wasNext = true;
 			current = next;

@@ -12,17 +12,20 @@ import org.junit.jupiter.api.Test;
 
 import telran.util.Collection;
 
-abstract class  CollectionTests {
+abstract class CollectionTests {
 	protected final static int NUMBER_OF_ADD_ELEM = 100;
-	private static final int N_RUNS = 10000;
-	private static final int N_NUMBERS = 10000;
+	private static final int N_RUNS = 1000;
+	private static final int N_NUMBERS = 1000;
 	private static final int N_RANDOM_RUNS = 10;
 	private static final int N_RANDOM_NUMBERS = 10;
 	protected Collection<Integer> collection;
+
 	protected abstract Collection<Integer> createCollection();
-	Integer[] expected = {10, -5, 13, 20, 40, 15};
+
+	Integer[] expected = { 10, -5, 13, 20, 40, 15 };
 	Random rand = new Random();
 	int initialSize = 0;
+
 	@BeforeEach
 	void setUp() throws Exception {
 		collection = createCollection();
@@ -30,7 +33,7 @@ abstract class  CollectionTests {
 	}
 
 	private void fillCollection() {
-		for(int elt: expected) {
+		for (int elt : expected) {
 			collection.add(elt++);
 			initialSize++;
 		}
@@ -42,11 +45,11 @@ abstract class  CollectionTests {
 		assertTrue(collection.add(10));
 		int expectedSize = collection.size() + NUMBER_OF_ADD_ELEM;
 		int count = NUMBER_OF_ADD_ELEM;
-		while(count-- > 0) {
+		while (count-- > 0) {
 			collection.add(rand.nextInt(50));
 		}
 		assertEquals(expectedSize, collection.size());
-	}	
+	}
 
 	@Test
 	void removeTest() {
@@ -56,9 +59,9 @@ abstract class  CollectionTests {
 		assertFalse(collection.remove(expected[0]));
 		assertEquals(expectedSize, collection.size());
 	}
-	
+
 	@Test
-	void removeIfAllTrueAndAllFalseTest() {		
+	void removeIfAllTrueAndAllFalseTest() {
 		int expectedSize = collection.size();
 		Predicate<Integer> AllFalsePredicate = new AllFalsePredicate();
 		assertFalse(collection.removeIf(AllFalsePredicate));
@@ -66,45 +69,46 @@ abstract class  CollectionTests {
 		assertTrue(collection.removeIf(AllFalsePredicate.negate()));
 		assertEquals(0, collection.size());
 	}
+
 	@Test
 	void removeIfEvenTest() {
-		Integer[] expected1 = {-5, 13, 15};
+		Integer[] expected1 = { -5, 13, 15 };
 		assertTrue(collection.removeIf(new EvenPredicate()));
 		assertArrayEquals(expected1, collection.toArray(new Integer[0]));
 		for (int i = 0; i < N_RANDOM_RUNS; i++) {
 			fillRandomCollection();
 			collection.removeIf(new EvenPredicate());
 			for (int num : collection) {
-				assertTrue(num % 2 == 1);
+				assertTrue(num % 2 != 0);
 			}
 		}
 	}
-	
+
 	private void fillRandomCollection() {
 		collection = createCollection();
 		for (int i = 0; i < N_RANDOM_NUMBERS; i++) {
 			collection.add((int) (Math.random() * Integer.MAX_VALUE));
 		}
 	}
-	
+
 	@Test
 	void removeIfOddTest() {
-		Integer[] expected1 = {10, 20, 40};
+		Integer[] expected1 = { 10, 20, 40 };
 		assertTrue(collection.removeIf(new OddPredicate()));
 		Integer[] res = collection.toArray(new Integer[0]);
 		Arrays.sort(res);
 		assertArrayEquals(expected1, res);
 	}
-	
+
 	@Test
 	void removeIfMultiplicityTest() {
-		Integer[] expected1 = {-5, 10, 13, 20, 40};
+		Integer[] expected1 = { -5, 10, 13, 20, 40 };
 		assertTrue(collection.removeIf(new MultiplicityOfThreePredicate()));
 		Integer[] res = collection.toArray(new Integer[0]);
 		Arrays.sort(res);
 		assertArrayEquals(expected1, res);
 	}
-	
+
 	@Test
 	void containTest() {
 		assertTrue(collection.contains(10));
@@ -115,9 +119,10 @@ abstract class  CollectionTests {
 	void sizeTest() {
 		assertEquals(initialSize, collection.size());
 	}
+
 	@Test
 	void toArrayTest() {
-		Integer [] expected2 = new Integer[100];
+		Integer[] expected2 = new Integer[100];
 		assertArrayEquals(expected, collection.toArray(new Integer[0]));
 		assertTrue(expected == collection.toArray(expected));
 		assertTrue(expected2 == collection.toArray(expected2));
@@ -126,7 +131,7 @@ abstract class  CollectionTests {
 			assertNull(expected2[i]);
 		}
 	}
-	
+
 	@Test
 	void wrongRemoveIteratorTest() {
 		Iterator<Integer> it = collection.iterator();
@@ -146,7 +151,7 @@ abstract class  CollectionTests {
 		}
 		assertTrue(wasExeption);
 	}
-	
+
 	@Test
 	void removeIfPerformanceTest() {
 		Predicate<Integer> predicate = new AllFalsePredicate().negate();
@@ -155,11 +160,12 @@ abstract class  CollectionTests {
 			collection.removeIf(predicate);
 		}
 	}
+
 	private void fillLargeCollection() {
-		for(int i = 0; i < N_NUMBERS; i++) {
+		for (int i = 0; i < N_NUMBERS; i++) {
 			collection.add(i);
 		}
-		
+
 	}
 
 }
