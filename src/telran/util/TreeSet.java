@@ -220,7 +220,12 @@ public class TreeSet<T> implements SortedSet<T> {
 			if(!wasNext) {
 				throw new IllegalStateException();
 			}
-			TreeSet.this.remove(prev.obj);
+			if (isJunction(prev)) {
+				current = prev;
+				TreeSet.this.remove(prev.obj);
+			} else {
+				TreeSet.this.remove(prev.obj);
+			}
 			wasNext = false;
 		}
 
