@@ -14,8 +14,8 @@ import telran.util.Collection;
 
 abstract class CollectionTests {
 	protected final static int NUMBER_OF_ADD_ELEM = 100;
-	private static final int N_RUNS = 1000;
-	private static final int N_NUMBERS = 1000;
+	private static final int N_RUNS = 10000;
+	private static final int N_NUMBERS = 10000;
 	private static final int N_RANDOM_RUNS = 10;
 	private static final int N_RANDOM_NUMBERS = 10;
 	protected Collection<Integer> collection;
@@ -163,7 +163,7 @@ abstract class CollectionTests {
 
 	private void fillLargeCollection() {
 		for (int i = 0; i < N_NUMBERS; i++) {
-			collection.add(i);
+			collection.add(rand.nextInt(500));
 		}
 
 	}
