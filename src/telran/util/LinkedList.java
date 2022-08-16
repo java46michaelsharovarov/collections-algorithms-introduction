@@ -110,14 +110,13 @@ public class LinkedList<T> implements List<T> {
 		Node<T> current = head;
 		Node<T> tmp = null;
 		reverse(current, tmp);
+		tmp = head;
+		head = tail;
+		tail = tmp;
 	}
 
 	private void reverse(Node<T> current, Node<T> tmp) {
-		if(current == null) {
-			tmp = head;
-			head = tail;
-			tail = tmp;
-		} else {
+		if(current != null) {
 			tmp = current.next;
 			current.next = current.prev;
 			current.prev = tmp;
