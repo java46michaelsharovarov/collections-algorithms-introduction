@@ -57,7 +57,6 @@ public class TreeSet<T> implements SortedSet<T> {
 		Node<T> node  = getNodeOrParent((T) pattern);		
 		if (node != null && node.obj.equals(pattern)) {
 			removeNode(node);
-			size--; 
 			return true;
 		}
 		return false;		
@@ -69,41 +68,34 @@ public class TreeSet<T> implements SortedSet<T> {
 		} else {
 			removeNonJunctionNode(node);
 		}
+		size--; 
 	}
 
 	private void removeNonJunctionNode(Node<T> node) {	
-		Node<T> parentNode = node.parent;
-		if(parentNode != null) {
-			if(node == parentNode.right) {
-				parentNode.right = nextNode(node);
-				if (parentNode.right != null) {
-					parentNode.right.parent = parentNode;
-				}
+		Node<T> parent = node.parent;
+		Node<T> child = node.right != null ? node.right : node.left;
+		if(parent != null) {
+			if(node == parent.right) {
+				parent.right = child;				
 			} else {
-				parentNode.left = nextNode(node);
-				if (parentNode.left != null) {
-					parentNode.left.parent = parentNode;
-				}
+				parent.left = child;				
 			}
 		} else {
-			root = nextNode(node);
-			if (root != null) {
-				root.parent = null;
-			}
-		}		
-	}
-
-	private Node<T> nextNode(Node<T> node) {
-		return node.right != null ? node.right : node.left;
+			root = child;
+		}	
+		if (child != null) {
+			child.parent = parent;
+		}
 	}
 
 	private void removeJunctionNode(Node<T> node) {
 		Node<T> tmp = getLeastNodeFrom(node.right);
 		node.obj = tmp.obj;
-		node.right = tmp.right;
-		if(tmp.right != null) {
-			tmp.right.parent = node;
-		}
+		removeNonJunctionNode(tmp);
+//		node.right = tmp.right;
+//		if(tmp.right != null) {
+//			tmp.right.parent = node;
+//		}
 	}
 
 	private boolean isJunction(Node<T> node) {
@@ -186,7 +178,6 @@ public class TreeSet<T> implements SortedSet<T> {
 	private class TreeSetIterator implements Iterator<T> {
 		Node<T> current = root == null ? null : getLeastNodeFrom(root);
 		Node<T> prev;
-		boolean wasNext = false;
 
 		@Override
 		public boolean hasNext() {
@@ -198,7 +189,6 @@ public class TreeSet<T> implements SortedSet<T> {
 			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
-			wasNext = true;
 			prev = current;
 			updateCurrent();
 			return prev.obj;
@@ -217,16 +207,14 @@ public class TreeSet<T> implements SortedSet<T> {
 
 		@Override
 		public void remove() {
-			if(!wasNext) {
+			if(prev == null) {
 				throw new IllegalStateException();
 			}
 			if (isJunction(prev)) {
 				current = prev;
-				TreeSet.this.remove(prev.obj);
-			} else {
-				TreeSet.this.remove(prev.obj);
 			}
-			wasNext = false;
+			removeNode(prev);
+			prev = null;
 		}
 
 	}

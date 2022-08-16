@@ -151,6 +151,12 @@ abstract class CollectionTests {
 		}
 		assertTrue(wasExeption);
 	}
+	
+	@Test
+	void emptyCollectionTest() {
+		collection = createCollection();
+		assertArrayEquals(new Integer[0], collection.toArray(new Integer[0]));
+	}
 
 	@Test
 	void removeIfPerformanceTest() {
