@@ -109,15 +109,21 @@ public class LinkedList<T> implements List<T> {
 	public void reverse() {
 		Node<T> current = head;
 		Node<T> tmp = null;
-		while(current != null) {			
+		reverse(current, tmp);
+	}
+
+	private void reverse(Node<T> current, Node<T> tmp) {
+		if(current == null) {
+			tmp = head;
+			head = tail;
+			tail = tmp;
+		} else {
 			tmp = current.next;
 			current.next = current.prev;
 			current.prev = tmp;
 			current = current.prev;
+			reverse(current, tmp);
 		}
-		tmp = head;
-		head = tail;
-		tail = tmp;
 	}	
 	
 	private class LinkedListIterator implements Iterator<T> {
