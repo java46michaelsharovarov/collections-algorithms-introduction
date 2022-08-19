@@ -107,9 +107,8 @@ public class LinkedList<T> implements List<T> {
 	}
 	
 	public void reverse() {
-		Node<T> current = head;
 		Node<T> tmp = null;
-		reverse(current, tmp);
+		reverse(head, tmp);
 		tmp = head;
 		head = tail;
 		tail = tmp;
@@ -120,8 +119,7 @@ public class LinkedList<T> implements List<T> {
 			tmp = current.next;
 			current.next = current.prev;
 			current.prev = tmp;
-			current = current.prev;
-			reverse(current, tmp);
+			reverse(current.prev, tmp);
 		}
 	}	
 	

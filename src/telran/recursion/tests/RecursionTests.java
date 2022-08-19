@@ -35,6 +35,7 @@ class RecursionTests {
 	@Test
 	void squareTest() {
 		assertEquals(9, square(3));
+		assertEquals(9, square(-3));
 	}
 	
 //	private void f() {

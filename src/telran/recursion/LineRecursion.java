@@ -15,6 +15,9 @@ public class LineRecursion {
 	 * @return a ^ b
 	 */
 	public static long pow(int a, int b) {
+		if (b < 0) {
+			throw new IllegalArgumentException("power can't be a negative");
+		}
 		if (b == 0) {
 			return 1;
 		}
@@ -24,11 +27,11 @@ public class LineRecursion {
 	private static int multiply(int x, long y) {         
         if (y == 0) {
         	return 0;
-        } else if (y < 0) {
-        	return x + multiply(x, y + 1);
-        } else {
-        return x + multiply(x, y - 1);
         }
+        if (y < 0) {
+        	return x + multiply(x, y + 1);
+        }
+        return x + multiply(x, y - 1);
     }
 	
 	/**
@@ -37,9 +40,13 @@ public class LineRecursion {
 	 * @return x ^ 2
 	 */
 	public static int square(int x) {
-		if (x == 0)
-		      return 0;
-		   return square(x - 1) + x + x - 1;
+		if (x == 1) {
+			return 1;
+		}
+		if (x < 0) {
+			return square(-x);
+		}
+		return square(x - 1) + x + x - 1;		
 	}
 
 	/**
