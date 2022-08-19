@@ -289,11 +289,10 @@ public class TreeSet<T> implements SortedSet<T> {
 		displayAsDirectory(root, 0);
 	}
 	private void displayAsDirectory(Node<T> root, int level) {
-		if (root != null) {
-			displayRoot(root, level);
-			displayAsDirectory(root.left, level + 1);
-			displayAsDirectory(root.right, level + 1);
-		}
+		if (root == null) return;
+		displayRoot(root, level);
+		displayAsDirectory(root.left, level + 1);
+		displayAsDirectory(root.right, level + 1);
 	}
 
 	public int height() {
@@ -329,11 +328,10 @@ public class TreeSet<T> implements SortedSet<T> {
 	}
 
 	private void inversion(Node<T> root) {
-		if (root != null) {
-			swap(root);
-			inversion(root.left);
-			inversion(root.right);
-		}		
+		if (root == null) return;
+		swap(root);
+		inversion(root.left);
+		inversion(root.right);		
 	}
 
 	private void swap(Node<T> root) {
