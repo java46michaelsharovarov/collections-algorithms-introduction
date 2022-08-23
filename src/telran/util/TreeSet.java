@@ -80,27 +80,6 @@ public class TreeSet<T> implements SortedSet<T> {
 		newNode.parent = parent;		
 	}
 
-//	@Override
-//	public boolean add(T obj) {
-//		Node<T> parent = getNodeOrParent(obj);
-//		boolean res = false;
-//		int compRes = 0;
-//		if (parent == null || (compRes = comp.compare(obj, parent.obj)) != 0) {
-//			Node<T> newNode = new Node<>(obj);
-//			if (parent == null) {
-//				root = newNode;
-//			} else if (compRes > 0) {
-//				parent.right = newNode;
-//			} else {
-//				parent.left = newNode;
-//			}
-//			res = true;
-//			newNode.parent = parent;
-//			size++;
-//		}
-//		return res;
-//	}
-
 	@Override
 	public boolean remove(Object pattern) {
 		@SuppressWarnings("unchecked")
@@ -142,10 +121,6 @@ public class TreeSet<T> implements SortedSet<T> {
 		Node<T> tmp = getLeastNodeFrom(node.right);
 		node.obj = tmp.obj;
 		removeNonJunctionNode(tmp);
-//		node.right = tmp.right;
-//		if(tmp.right != null) {
-//			tmp.right.parent = node;
-//		}
 	}
 
 	private boolean isJunction(Node<T> node) {
@@ -312,7 +287,7 @@ public class TreeSet<T> implements SortedSet<T> {
 		return width(root);
 	}
 	private int width(Node<T> root) {
-		int res = 0;
+		int res  = 0;
 		if (root != null) {
 			res = root.left == null && root.right == null
 					? 1 
@@ -320,25 +295,49 @@ public class TreeSet<T> implements SortedSet<T> {
 		}
 		return res;
 	}
-	/**
-	 * tree inversion -  swap of left and right subtrees
-	 */
+	
 	public void inversion() {
 		inversion(root);
+		comp = comp.reversed();
 	}
-
 	private void inversion(Node<T> root) {
 		if (root == null) return;
 		swap(root);
 		inversion(root.left);
 		inversion(root.right);		
 	}
-
 	private void swap(Node<T> root) {
 		Node<T> tmp = root.left;
 		root.left = root.right;
 		root.right = tmp;		
 	}
+		
+	public void balance() {
+		@SuppressWarnings("unchecked")
+		Node<T>[] arrayOfNodes = new Node[size()];
+		fillArray(root, arrayOfNodes, 0);	
+		root = balance(arrayOfNodes, 0, arrayOfNodes.length - 1, null);
+	}
 	
+	private Node<T> balance(Node<T>[] array, int left, int right, Node<T> prevRoot) {
+		if (left <= right) {
+			int indexOfMiddleNode = (left + right) / 2;
+			root = array[indexOfMiddleNode];
+			root.parent = prevRoot;
+			prevRoot = root;		
+			root.left = balance(array, left, indexOfMiddleNode - 1, prevRoot);
+			root.right = balance(array, indexOfMiddleNode + 1, right, prevRoot);	
+			return root == prevRoot? null: prevRoot;
+		}
+		return root == prevRoot? null : array[(left + right) / 2];		
+	}
+
+	private void fillArray(Node<T> root, Node<T>[] array, int i) {
+		if (root != null) {
+			fillArray(root.left, array, i + 1);
+			array[i] = root;
+			fillArray(root.right, array, i + 1);
+		}		
+	}
 
 }

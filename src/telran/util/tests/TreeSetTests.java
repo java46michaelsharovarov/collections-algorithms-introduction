@@ -2,45 +2,58 @@ package telran.util.tests;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import telran.util.Collection;
 import telran.util.TreeSet;
 
-public class TreeSetTests extends SetTests {
+public class TreeSetTests extends SortedSetTests {
     TreeSet<Integer> tree;
 	@Override
-	protected Collection<Integer> createCollection() {
-		
+	protected Collection<Integer> createCollection() {		
 		return new TreeSet<Integer>();
 	}
+	
+	int index = 0;
+	@Override
+	protected void orderLargeArray() {
+		Integer tmp[] = new Integer[largeArray.length];
+		index = 0;
+		orderLargeArray(tmp, 0, largeArray.length - 1);
+		largeArray = tmp;
+	}
+	private void orderLargeArray(Integer[] tmp, int left, int right) {
+		if (left <= right) {
+			int middle = (left + right) / 2;
+			tmp[index++] = largeArray[middle];
+			orderLargeArray(tmp, left, middle - 1);
+			orderLargeArray(tmp, middle + 1, right);
+		}		
+	}
+	
+//	@Override
+//	protected void orderLargeArray() {
+//		Integer tmp[] = {0,1,2,3,4};
+//		index = 0;
+//		orderLargeArray(tmp, 0, tmp.length - 1);
+//		largeArray = tmp;
+//	}
+//	private void orderLargeArray(Integer[] tmp, int left, int right) {
+//		if (left <= right) {
+//			int middle = (left + right) / 2;
+//			tmp[index++] = largeArray[middle];
+//			orderLargeArray(tmp, left, middle - 1);
+//			orderLargeArray(tmp, middle + 1, right);
+//		}		
+//	}
 	
 	@Override
 	@BeforeEach
 	void setUp() throws Exception {
 		super.setUp();
 		tree = (TreeSet<Integer>)collection;
-	}
-	
-	@Test
-	@Override
-	void toArrayTest() {
-		Arrays.sort(expected);
-		super.toArrayTest();
-	}
-	
-	@Test
-	void firstTest() {
-		assertEquals((Integer)(-5), tree.first());
-	}
-	
-	@Test
-	void lastTest() {
-		assertEquals((Integer)(40), tree.last());
-	}
+	} 
 	
 	@Test
 	void displayRotatedTest() {
@@ -57,14 +70,6 @@ public class TreeSetTests extends SetTests {
 		System.out.println("*".repeat(10));
 		treeTest.displayAsDirectory();
 		System.out.println("*".repeat(10));
-		/*
-		   10
-		     -5
-		     13
-		       20
-		         15
-		         40
-		 */
 	}
 	
 	@Test
@@ -93,8 +98,24 @@ public class TreeSetTests extends SetTests {
 
 	private void fillCollection(Integer[] array, TreeSet<Integer> tree) {
 		for (int elt : array) {
-			tree.add(elt++);
+			tree.add(elt);
 		}
+	}
+	
+	@Test
+	void balanceTest() {
+		Integer[] array = new Integer[63];
+		fillArraySequence(array);
+		collection = new TreeSet<>();
+		tree = (TreeSet<Integer>)collection;
+		fillCollection(array);
+		assertEquals(63, tree.size());
+		assertEquals(63, tree.height());
+		assertEquals(1, tree.width());
+		tree.balance();
+		assertEquals(6, tree.height());
+		assertEquals(32, tree.width());
+		assertArrayEquals(array, tree.toArray(new Integer[0]));		
 	}
 
 }

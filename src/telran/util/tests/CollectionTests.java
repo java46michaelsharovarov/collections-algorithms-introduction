@@ -23,18 +23,19 @@ abstract class CollectionTests {
 	protected abstract Collection<Integer> createCollection();
 
 	Integer[] expected = { 10, -5, 13, 20, 40, 15 };
+	Integer largeArray[] = new Integer[N_NUMBERS];
 	Random rand = new Random();
 	int initialSize = 0;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		collection = createCollection();
-		fillCollection();
+		fillCollection(expected);
 	}
 
-	private void fillCollection() {
-		for (int elt : expected) {
-			collection.add(elt++);
+	protected void fillCollection(Integer[] array) {
+		for (Integer elt : array) {
+			collection.add(elt);
 			initialSize++;
 		}
 	}
@@ -112,6 +113,8 @@ abstract class CollectionTests {
 	@Test
 	void containTest() {
 		assertTrue(collection.contains(10));
+		assertTrue(collection.contains(-5));
+		assertTrue(collection.contains(40));
 		assertFalse(collection.contains(1000));
 	}
 
@@ -161,17 +164,19 @@ abstract class CollectionTests {
 	@Test
 	void removeIfPerformanceTest() {
 		Predicate<Integer> predicate = new AllFalsePredicate().negate();
+		fillArraySequence(largeArray);
+		orderLargeArray();
 		for (int i = 0; i < N_RUNS; i++) {
-			fillLargeCollection();
+			fillCollection(largeArray);
 			collection.removeIf(predicate);
 		}
 	}
-
-	private void fillLargeCollection() {
-		for (int i = 0; i < N_NUMBERS; i++) {
-			collection.add(rand.nextInt(500));
-		}
-
+	protected void orderLargeArray() {			 
+	}
+	void fillArraySequence(Integer[] array) {
+		for(int i = 0; i < array.length; i++) {
+			array[i] = i;
+		}		
 	}
 
 }
