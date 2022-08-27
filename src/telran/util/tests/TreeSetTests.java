@@ -31,23 +31,7 @@ public class TreeSetTests extends SortedSetTests {
 			orderLargeArray(tmp, middle + 1, right);
 		}		
 	}
-	
-//	@Override
-//	protected void orderLargeArray() {
-//		Integer tmp[] = {0,1,2,3,4};
-//		index = 0;
-//		orderLargeArray(tmp, 0, tmp.length - 1);
-//		largeArray = tmp;
-//	}
-//	private void orderLargeArray(Integer[] tmp, int left, int right) {
-//		if (left <= right) {
-//			int middle = (left + right) / 2;
-//			tmp[index++] = largeArray[middle];
-//			orderLargeArray(tmp, left, middle - 1);
-//			orderLargeArray(tmp, middle + 1, right);
-//		}		
-//	}
-	
+
 	@Override
 	@BeforeEach
 	void setUp() throws Exception {

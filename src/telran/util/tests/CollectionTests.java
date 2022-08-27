@@ -19,6 +19,10 @@ abstract class CollectionTests {
 	private static final int N_RANDOM_RUNS = 10;
 	private static final int N_RANDOM_NUMBERS = 10;
 	protected Collection<Integer> collection;
+	Predicate<Integer> AllFalsePredicate = e -> false;
+	Predicate<Integer> EvenPredicate = e -> e % 2 == 0;
+	Predicate<Integer> MultiplicityOfThreePredicate = e -> e % 3 == 0;
+	Predicate<Integer> OddPredicate = e -> e % 2 != 0;
 
 	protected abstract Collection<Integer> createCollection();
 
@@ -63,8 +67,7 @@ abstract class CollectionTests {
 
 	@Test
 	void removeIfAllTrueAndAllFalseTest() {
-		int expectedSize = collection.size();
-		Predicate<Integer> AllFalsePredicate = new AllFalsePredicate();
+		int expectedSize = collection.size();		
 		assertFalse(collection.removeIf(AllFalsePredicate));
 		assertEquals(expectedSize, collection.size());
 		assertTrue(collection.removeIf(AllFalsePredicate.negate()));
@@ -74,11 +77,11 @@ abstract class CollectionTests {
 	@Test
 	void removeIfEvenTest() {
 		Integer[] expected1 = { -5, 13, 15 };
-		assertTrue(collection.removeIf(new EvenPredicate()));
+		assertTrue(collection.removeIf(EvenPredicate));
 		assertArrayEquals(expected1, collection.toArray(new Integer[0]));
 		for (int i = 0; i < N_RANDOM_RUNS; i++) {
 			fillRandomCollection();
-			collection.removeIf(new EvenPredicate());
+			collection.removeIf(EvenPredicate);
 			for (int num : collection) {
 				assertTrue(num % 2 != 0);
 			}
@@ -95,7 +98,7 @@ abstract class CollectionTests {
 	@Test
 	void removeIfOddTest() {
 		Integer[] expected1 = { 10, 20, 40 };
-		assertTrue(collection.removeIf(new OddPredicate()));
+		assertTrue(collection.removeIf(OddPredicate));
 		Integer[] res = collection.toArray(new Integer[0]);
 		Arrays.sort(res);
 		assertArrayEquals(expected1, res);
@@ -104,7 +107,7 @@ abstract class CollectionTests {
 	@Test
 	void removeIfMultiplicityTest() {
 		Integer[] expected1 = { -5, 10, 13, 20, 40 };
-		assertTrue(collection.removeIf(new MultiplicityOfThreePredicate()));
+		assertTrue(collection.removeIf(MultiplicityOfThreePredicate));
 		Integer[] res = collection.toArray(new Integer[0]);
 		Arrays.sort(res);
 		assertArrayEquals(expected1, res);
@@ -163,12 +166,11 @@ abstract class CollectionTests {
 
 	@Test
 	void removeIfPerformanceTest() {
-		Predicate<Integer> predicate = new AllFalsePredicate().negate();
 		fillArraySequence(largeArray);
 		orderLargeArray();
 		for (int i = 0; i < N_RUNS; i++) {
 			fillCollection(largeArray);
-			collection.removeIf(predicate);
+			collection.removeIf(AllFalsePredicate.negate());
 		}
 	}
 	protected void orderLargeArray() {			 

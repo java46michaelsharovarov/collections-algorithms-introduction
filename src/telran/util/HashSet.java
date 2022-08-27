@@ -3,12 +3,11 @@ package telran.util;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class HashSet<T> implements Set<T> {
+public class HashSet<T> extends AbstractCollection<T> implements Set<T> {
 	
 	private static final double DEFAULT_FACTOR = 0.75;
 	private static final int DEFAULT_HASH_TABLE_CAPACITY = 16;
 	private List<T> [] hashTable;
-	private int size;
 	private double factor;
 	
 	@SuppressWarnings("unchecked")
@@ -130,11 +129,6 @@ public class HashSet<T> implements Set<T> {
 			res = hashTable[index].contains(pattern);
 		}
 		return res;
-	}
-
-	@Override
-	public int size() {		
-		return size;
 	}
 
 	@Override

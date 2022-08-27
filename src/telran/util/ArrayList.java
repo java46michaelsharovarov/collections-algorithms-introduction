@@ -5,10 +5,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
-public class ArrayList<T> implements List<T> {
+public class ArrayList<T> extends AbstractCollection<T> implements List<T> {
 	static final int DEFAULT_CAPACITY = 16;
 	private T[] array;
-	private int size;
 	@SuppressWarnings("unchecked")	
 	public ArrayList(int capacity) {
 		array = (T[]) new Object[capacity];
@@ -34,15 +33,10 @@ public class ArrayList<T> implements List<T> {
 		removeOneElement(index);
 		return true;
 	}
-
-	@Override
-	public int size() {		
-		return size;
-	}
 	
 	@Override
 	public boolean add(int index, T obj) {
-		if(checkIndexOutOfBounds(index)) {
+		if(!checkExistingIndex(index)) {
 			return false;
 		}
 		ensureCapacity();
@@ -53,22 +47,12 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public T remove(int index) {
-		if(checkIndexOutOfBounds(index)) {
+		if(!checkExistingIndex(index)) {
 			return null;
 		}
 		T res = array[index];
 		removeOneElement(index);
 		return res;
-	}
-
-	@Override
-	public int indexOf(Object pattern) {
-		for(int i = 0; i < size; i++) {
-			if(array[i].equals(pattern)) {
-				return i;
-			}
-		}
-		return -1;
 	}
 
 	@Override
@@ -83,7 +67,7 @@ public class ArrayList<T> implements List<T> {
 	
 	@Override
 	public T get(int index) {		
-		return checkIndexOutOfBounds(index) ? null : array[index];
+		return checkExistingIndex(index) ? array[index] : null;
 	}
 	
 	@Override
@@ -148,10 +132,6 @@ public class ArrayList<T> implements List<T> {
 		if (array.length == size) {
 			array = Arrays.copyOf(array, size * 2);
 		}
-	}
-
-	private boolean checkIndexOutOfBounds(int index) {
-		return index < 0 || index > size;
 	}
 
 }

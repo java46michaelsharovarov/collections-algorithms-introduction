@@ -41,4 +41,14 @@ public class StandardTreeSet<T> implements SortedSet<T> {
 		return treeSet.last();
 	}
 
+	@Override
+	public T ceiling(T pattern) {		
+		return treeSet.ceiling(pattern);
+	}
+
+	@Override
+	public T floor(T pattern) {		
+		return treeSet.floor(pattern);
+	}
+
 }

@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class TreeSet<T> implements SortedSet<T> {
+public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 
 	private static class Node<T> {
 		T obj;
@@ -21,7 +21,6 @@ public class TreeSet<T> implements SortedSet<T> {
 	private static final int N_SYMBOLS_PER_LEVEL = 3;
 
 	private Node<T> root;
-	int size;
 	Comparator<T> comp;
 
 	public TreeSet(Comparator<T> comp) {
@@ -146,11 +145,6 @@ public class TreeSet<T> implements SortedSet<T> {
 	}
 
 	@Override
-	public int size() {
-		return size;
-	}
-
-	@Override
 	public Iterator<T> iterator() {
 		return new TreeSetIterator();
 	}
@@ -220,14 +214,7 @@ public class TreeSet<T> implements SortedSet<T> {
 		}
 
 		private void updateCurrent() {
-			current = current.right != null ? getLeastNodeFrom(current.right) : getGreaterParent(current);
-		}
-
-		private Node<T> getGreaterParent(Node<T> node) {
-			while (node.parent != null && node.parent.left != node) {
-				node = node.parent;
-			}
-			return node.parent;
+			current = getNextNode(current);
 		}
 
 		@Override
@@ -313,31 +300,93 @@ public class TreeSet<T> implements SortedSet<T> {
 	}
 		
 	public void balance() {
-		@SuppressWarnings("unchecked")
-		Node<T>[] arrayOfNodes = new Node[size()];
-		fillArray(root, arrayOfNodes, 0);	
-		root = balance(arrayOfNodes, 0, arrayOfNodes.length - 1, null);
-	}
-	
-	private Node<T> balance(Node<T>[] array, int left, int right, Node<T> prevRoot) {
-		if (left <= right) {
-			int indexOfMiddleNode = (left + right) / 2;
-			root = array[indexOfMiddleNode];
-			root.parent = prevRoot;
-			prevRoot = root;		
-			root.left = balance(array, left, indexOfMiddleNode - 1, prevRoot);
-			root.right = balance(array, indexOfMiddleNode + 1, right, prevRoot);	
-			return root == prevRoot? null: prevRoot;
-		}
-		return root == prevRoot? null : array[(left + right) / 2];		
+		//Create sorted Node<T>[];
+		//balance creates new root for each part [left, right] of Node<T>[]
+		//root.left = balance call from left (left, rootIndex - 1)
+		//root.right = balance call from right(rootIndex + 1, right)
+		//don't forget about parent
+		Node<T> [] arrayNodes = getArrayNodes();
+		root = getBalancedRoot(arrayNodes, 0, size - 1, null);
 	}
 
-	private void fillArray(Node<T> root, Node<T>[] array, int i) {
-		if (root != null) {
-			fillArray(root.left, array, i + 1);
-			array[i] = root;
-			fillArray(root.right, array, i + 1);
-		}		
+	private Node<T> getBalancedRoot(Node<T>[] arrayNodes, int left, int right, Node<T> parent) {
+		Node<T> root = null;
+		if (left <= right) {
+			int indexRoot = (left + right) / 2;
+			root = arrayNodes[indexRoot];
+			root.left = getBalancedRoot(arrayNodes, left, indexRoot - 1, root);
+			root.right = getBalancedRoot(arrayNodes, indexRoot + 1, right, root);
+			root.parent = parent;
+		}
+		return root;
+	}
+
+	private Node<T>[] getArrayNodes() {
+		@SuppressWarnings("unchecked")
+		Node<T> res[] = new Node[size];
+		int index = 0;
+		Node<T> current = getLeastNodeFrom(root);
+		while(current != null) {
+			res[index++] = current;
+			current = getNextNode(current);
+		}
+		return res;
+	}
+	private Node<T> getGreaterParent(Node<T> node) {
+		while (node.parent != null && node.parent.left != node) {
+			node = node.parent;
+		}
+		return node.parent;
+	}
+	private Node<T> getNextNode(Node<T> current) {
+		return current.right != null ? getLeastNodeFrom(current.right) :
+			getGreaterParent(current);
+	}	
+
+	@Override
+	public T ceiling(T pattern) {
+		return getCeilingOrFloor(pattern, comp);
+	}
+
+	@Override
+	public T floor(T pattern) {
+		return getCeilingOrFloor(pattern, comp.reversed());
+	}
+
+	private T getCeilingOrFloor(T pattern, Comparator<T> compForRes) {
+		Node<T> cur = root;
+		boolean hasBigger = false;
+		while (cur != null) {
+			int compRes = comp.compare(cur.obj, pattern);
+			if (compRes == 0) {
+				return cur.obj;
+			}				
+			if (compRes > 0) {
+				hasBigger = true;
+				if(cur.left == null) {
+					 return getRes(pattern, cur, compForRes);
+				}
+				cur = cur.left;				
+			} else {
+				if(cur.right == null) {
+					if(hasBigger) {
+						return getRes(pattern, cur, compForRes);
+					}					
+				}
+				cur = cur.right;				
+			}
+		}
+		return null;
+	}
+	
+	private T getRes(T pattern, Node<T> cur, Comparator<T> comp) {
+		while (cur != null) {
+			if (comp.compare(cur.obj, pattern) > 0) {
+				return cur.obj;
+			} 
+			cur = cur.parent;
+		}
+		return null;
 	}
 
 }
