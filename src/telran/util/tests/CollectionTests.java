@@ -3,6 +3,7 @@ package telran.util.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
+import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Predicate;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import telran.util.Collection;
+import telran.util.HashSet;
 
 abstract class CollectionTests {
 	protected final static int NUMBER_OF_ADD_ELEM = 100;
@@ -164,7 +166,7 @@ abstract class CollectionTests {
 		assertArrayEquals(new Integer[0], collection.toArray(new Integer[0]));
 	}
 
-	@Test
+//	@Test
 	void removeIfPerformanceTest() {
 		fillArraySequence(largeArray);
 		orderLargeArray();
@@ -179,6 +181,34 @@ abstract class CollectionTests {
 		for(int i = 0; i < array.length; i++) {
 			array[i] = i;
 		}		
+	}
+	
+	@Test
+	void cleanTest() {
+		collection.clean();
+		assertEquals(0, collection.size());
+	}
+	
+	@Test
+	void shuffleTest() {
+		int size = collection.size();
+		Integer array[] = collection.toArray(new Integer[0]);
+		Integer arraySh [] = collection.toShuffleArray(new Integer[0]);
+		System.out.println(Arrays.toString(arraySh));
+		assertFalse(Arrays.equals(array, arraySh));
+		collection = new HashSet<Integer>();
+		fillCollection(arraySh);
+		assertEquals(size, collection.size());
+	}
+	
+	@Test
+	void streamTest() {
+		assertEquals(93, collection.stream().mapToInt(x -> x).sum());
+		assertArrayEquals(new Integer[] {-5}, collection.stream()
+				.filter(n -> n < 0).toArray(size -> new Integer[size]));
+		IntSummaryStatistics summary = collection.stream().mapToInt(x -> x).summaryStatistics();
+		assertEquals(-5, summary.getMin());
+		assertEquals(40, summary.getMax());		
 	}
 
 }
